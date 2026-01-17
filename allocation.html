@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlPage">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUBYRED GARMENT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="pic/logooo.png">
+<style>
+:root {
+    --bg:#0f172a; --card:#1e293b; --text:#f1f5f9;
+    --muted:#94a3b8; --border:#334155; --red:#d80f0f; --green:#16a34a; --overlay: rgba(0,0,0,0.8);
+}
+[data-theme="light"] {
+    --bg:#f1f5f9; --card:#ffffff; --text:#1e293b;
+    --muted:#64748b; --border:#e2e8f0; --overlay: rgba(0,0,0,0.5);
+}
+* { box-sizing:border-box; }
+body { margin:0; font-family:Cairo; background:var(--bg); color:var(--text); transition: 0.3s; }
+.container { max-width:1400px; margin:auto; padding:15px; }
+
+header { background:var(--card); padding:20px; border-radius:18px; border:1px solid var(--border); margin-bottom: 20px; }
+
+/* تنسيق الهيدر */
+.header-top { display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; gap: 15px; }
+
+.brand-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.logo-name-row { display: flex; align-items: center; gap: 15px; }
+.rotating-logo { width: 65px; height: 65px; border-radius: 50%; animation: rotate 10s linear infinite; }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.company-name { font-weight: 800; font-size: 1.8rem; letter-spacing: 1px; }
+.red-text { color: var(--red); }
+.sub-title { font-size: 1.1rem; color: var(--muted); margin-top: 5px; font-weight: 700; text-transform: uppercase; }
+
+/* المسافة بين الأزرار */
+.controls-group { display: flex; gap: 15px; justify-content: flex-end; align-items: center; }
+
+button, select {
+    padding:10px 15px; border-radius:10px; border:1px solid var(--border);
+    background:var(--bg); color:var(--text); cursor:pointer; font-family: Cairo; font-weight: 700; font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .header-top { 
+        display: flex; 
+        flex-direction: column; 
+    }
+    .brand-wrapper { order: 1; width: 100%; margin-bottom: 15px; }
+    
+    /* تعديل الترتيب في الموبايل من الشمال لليمين */
+    .controls-group { 
+        order: 2; 
+        width: 100%; 
+        display: flex;
+        flex-direction: row; /* التأكد من الاتجاه الأفقي */
+        justify-content: flex-start; /* يبدأ من الشمال */
+        gap: 10px;
+    }
+    
+    #btnBack { order: 1; margin-right: auto;position: relative;top: 243px;left:1%} /* أول زرار من الشمال */
+    .theme-btn { order: 2;position: relative;top: 0;left:40%; } /* زرار الثيم في المنتصف */
+    #langSelect { order: 3;position: relative;top: 0;left:47%;} /* زرار اللغة في الآخر */
+    
+    .rotating-logo { width: 55px; height: 55px; }
+}
+
+/* تنسيق الكروت */
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px; }
+.card { background:var(--card); border-radius:20px; padding:25px; border:1px solid var(--border); cursor: pointer; transition: 0.2s; }
+.card:hover { transform: translateY(-5px); border-color: var(--red); }
+.card h3 { margin:0 0 15px; color:var(--red); border-bottom: 2px solid var(--border); padding-bottom: 8px; font-size: 1.6rem; font-weight: 800;}
+
+.row { display:flex; justify-content:space-between; margin-bottom:12px; font-size: 1.2rem; font-weight: 600; }
+.row b { font-weight: 800; color: var(--text); }
+
+/* تقييمات تحت بعضها */
+.rate-row { border-left: 4px solid var(--red); background: rgba(216, 15, 15, 0.05); padding: 5px 12px; border-radius: 5px; margin-bottom: 8px; }
+
+.status-badge { padding: 12px; border-radius: 12px; font-weight: 800; color: #fff; text-align: center; display: block; margin-top: 15px; font-size: 1.1rem; }
+.status-active { background-color: var(--green); }
+.status-stopped { background-color: var(--red); }
+
+/* Modal */
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background: var(--overlay); backdrop-filter: blur(5px); overflow-y: auto; }
+.modal-content { background:var(--card); margin: 2% auto; padding:20px; border-radius:15px; width:95%; max-width:1200px; border:1px solid var(--border); }
+.close { font-size:32px; cursor:pointer; color: var(--red); }
+.table-wrapper { overflow-x: auto; margin-top: 15px; }
+table { width:100%; border-collapse: collapse; font-size: 1.1rem; }
+th, td { border: 1px solid var(--border); padding: 12px; text-align: center; }
+th { background: var(--bg); position: sticky; top: 0; }
+.filter-input { width: 95%; padding: 8px; background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-top">
+            <button onclick="window.location.href='index.html'" id="btnBack">⬅ Back</button>
+            
+            <div class="brand-wrapper">
+                <div class="logo-name-row">
+                    <img src="pic/logooo.png" alt="Logo" class="rotating-logo" onerror="this.src='https://via.placeholder.com/70/d80f0f/ffffff?text=RUBY'">
+                    <div class="company-name">RUBY<span class="red-text">RED</span> GARMENT</div>
+                </div>
+                <div class="sub-title" id="dashTitle">Production Dashboard</div>
+            </div>
+
+            <div class="controls-group">
+                <button onclick="toggleTheme()" class="theme-btn" title="Toggle Theme">🌓</button>
+                <select onchange="changeLang(this.value)" id="langSelect">
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                    <option value="tr">Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid" id="gridContainer"></div>
+</div>
+
+<div id="workerModal" class="modal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="modalTitle" style="margin:0"></h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div style="margin: 15px 0; display:flex; gap:10px;">
+            <button id="btnPrint" onclick="window.print()" style="background:#3b82f6; color:#fff">Print</button>
+            <button id="btnExcel" onclick="exportExcel()" style="background:#16a34a; color:#fff">Excel Export</button>
+        </div>
+        <div id="modalBody" class="table-wrapper"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+const SHEET_ID = "1cENOlMaEm3rXxzxGB40t42eWiJKa7zZy22B2l5nWVa0";
+let currentLang = "en";
+let cachedData = {};
+
+const T = {
+    en: { dash: "Production Dashboard", back: "⬅ Back", line: "Line", client: "Client", total: "Total Workers", att: "Attended", machines: "Machines", rateA: "Rate A", rateB: "Rate B", rateC: "Rate C", print: "Print", excel: "Excel Export" },
+    ar: { dash: "لوحة متابعة الإنتاج", back: "⬅ رجوع", line: "خط", client: "العميل", total: "إجمالي العمال", att: "الحضور", machines: "المكينات", rateA: "تقييم A", rateB: "تقييم B", rateC: "تقييم C", print: "طباعة", excel: "تصدير اكسيل" },
+    tr: { dash: "Üretim Takip Paneli", back: "⬅ Geri", line: "Hat", client: "Müşteri", total: "Toplam İşçi", att: "Katılan", machines: "Makineler", rateA: "Derece A", rateB: "Derece B", rateC: "Derece C", print: "Yazdır", excel: "Excel'e Aktar" }
+};
+
+async function loadAllLines() {
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = "<p style='text-align:center; width:100%; font-weight:bold;'>Syncing Data...</p>";
+    const promises = Array.from({ length: 30 }, (_, i) => fetchSingleLine(i + 1));
+    const results = await Promise.all(promises);
+    container.innerHTML = "";
+    results.forEach(data => { if (data) renderCard(data); });
+}
+
+async function fetchSingleLine(n) {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent('Line '+n)}`;
+    try {
+        const res = await fetch(url);
+        const text = await res.text();
+        const rows = text.split("\n").map(r => r.split('","').map(c => c.replace(/"/g, '')));
+        if (rows.length < 2) return null;
+        
+        const headers = rows[0].map(h => h.trim());
+        const dataRows = rows.slice(1).map(v => {
+            let o = {}; headers.forEach((h, i) => o[h] = v[i]?.trim() || ""); return o;
+        });
+
+        let A=0, B=0, C=0;
+        dataRows.forEach(r => {
+            const grade = (r.Rating || "").toUpperCase();
+            if(grade === "A") A++; else if(grade === "B") B++; else if(grade === "C") C++;
+        });
+
+        const lineData = {
+            id: n, client: dataRows[0].Client || "-", total: dataRows[0].TotalWorkers || 0,
+            att: dataRows[0].AttendedWorkers || 0, 
+            machines: [...new Set(dataRows.map(r => r.Machines).filter(m => m && m !== "-"))].join(" - "),
+            status: dataRows[0].Status || "-", A, B, C, headers: headers, raw: dataRows
+        };
+        cachedData[n] = lineData; return lineData;
+    } catch { return null; }
+}
+
+function renderCard(d) {
+    const t = T[currentLang];
+    const color = (d.att / d.total) >= 0.75 ? "#22c55e" : (d.att / d.total) >= 0.5 ? "#f59e0b" : "#ef4444";
+    const statusClass = d.status.toLowerCase().includes("active") ? "status-active" : "status-stopped";
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = () => showDetails(d.id);
+    card.innerHTML = `
+        <h3>${t.line} ${d.id}</h3>
+        <div class="row"><span>${t.client}</span><b>${d.client}</b></div>
+        <div class="row"><span>${t.total}</span><b>${d.total}</b></div>
+        <div class="row"><span>${t.att}</span><b><span style="color:${color}">●</span> ${d.att}</b></div>
+        <div class="row"><span>${t.machines}</span><b style="font-size:0.9rem; text-align:right;">${d.machines}</b></div>
+        <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+        <div class="row rate-row"><span>${t.rateA}</span><b>${d.A}</b></div>
+        <div class="row rate-row"><span>${t.rateB}</span><b>${d.B}</b></div>
+        <div class="row rate-row"><span>${t.rateC}</span><b>${d.C}</b></div>
+        <span class="status-badge ${statusClass}">${d.status}</span>
+    `;
+    document.getElementById('gridContainer').appendChild(card);
+}
+
+function showDetails(n) {
+    const d = cachedData[n];
+    const t = T[currentLang];
+    document.getElementById('modalTitle').innerText = `${t.line} ${n}`;
+    
+    // تحديث ترجمة أزرار المودال عند الفتح
+    document.getElementById('btnPrint').innerText = t.print;
+    document.getElementById('btnExcel').innerText = t.excel;
+
+    const exclude = ["Client", "TotalWorkers", "AttendedWorkers", "Machines", "Status", "Rating"];
+    const displayHeaders = d.headers.filter(h => !exclude.includes(h));
+
+    let html = `<table><thead><tr>`;
+    displayHeaders.forEach(h => html += `<th>${h}<br><input class="filter-input" onkeyup="filterTable(this)"></th>`);
+    html += `</tr></thead><tbody>`;
+    d.raw.forEach(row => {
+        html += `<tr>${displayHeaders.map(h => `<td>${row[h] || ""}</td>`).join('')}</tr>`;
+    });
+    html += `</tbody></table>`;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('workerModal').style.display = 'block';
+}
+
+function filterTable(input) {
+    const rows = input.closest('table').rows;
+    const index = input.parentElement.cellIndex;
+    const val = input.value.toUpperCase();
+    for (let i = 1; i < rows.length; i++) {
+        rows[i].style.display = rows[i].cells[index].innerText.toUpperCase().includes(val) ? "" : "none";
+    }
+}
+
+function changeLang(l) {
+    currentLang = l;
+    const t = T[l];
+    document.getElementById('htmlPage').dir = l === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('dashTitle').innerText = t.dash;
+    document.getElementById('btnBack').innerText = t.back;
+    
+    // تحديث أزرار الطباعة والإكسيل إذا كان المودال مفتوحاً
+    document.getElementById('btnPrint').innerText = t.print;
+    document.getElementById('btnExcel').innerText = t.excel;
+
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = "";
+    Object.values(cachedData).forEach(d => renderCard(d));
+}
+
+function closeModal() { document.getElementById('workerModal').style.display = 'none'; }
+function toggleTheme() {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+}
+function exportExcel() {
+    XLSX.writeFile(XLSX.utils.table_to_book(document.querySelector("table")), `Line_${document.getElementById('modalTitle').innerText}.xlsx`);
+}
+
+loadAllLines();
+</script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
